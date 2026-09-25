@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>20 Hearts For Rohini ✨</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Plus+Jakarta+Sans:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-1: #0a0410;
+      --bg-2: #180926;
+      --accent-rose: #ff758c;
+      --accent-gold: #f7d070;
+      --accent-lavender: #d8b4fe;
+      --glass: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.18);
+      --text-color: #fdf2f8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg-1), var(--bg-2), #12021f);
+      background-size: 400% 400%;
+      animation: bgShift 16s ease infinite;
+      color: var(--text-color);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    @keyframes bgShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    canvas#star-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    header {
+      margin-bottom: 30px;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent-lavender);
+      margin-bottom: 8px;
+    }
+
+    h1.title {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(3rem, 7vw, 5rem);
+      background: linear-gradient(45deg, var(--accent-rose), var(--accent-gold), var(--accent-lavender));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.1;
+    }
+
+    .guide-text {
+      font-size: 1rem;
+      color: var(--accent-gold);
+      margin-top: 10px;
+      opacity: 0.9;
+    }
+
+    /* Floating Hearts Grid Container */
+    .hearts-field {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 22px;
+      margin-top: 30px;
+      padding: 20px;
+    }
+
+    .origami-heart {
+      width: 80px;
+      height: 80px;
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: floatHeart 4s infinite ease-in-out;
+      transition: transform 0.3s ease;
+    }
+
+    .origami-heart:hover {
+      transform: scale(1.25) !important;
+    }
+
+    .heart-shape {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--accent-rose), #ff4d6d);
+      position: relative;
+      transform: rotate(-45deg);
+      box-shadow: 0 0 20px rgba(255, 117, 140, 0.5);
+      border-radius: 4px;
+    }
+
+    .heart-shape::before,
+    .heart-shape::after {
+      content: "";
+      width: 50px;
+      height: 50px;
+      background: inherit;
+      border-radius: 50%;
+      position: absolute;
+    }
+
+    .heart-shape::before {
+      top: -25px;
+      left: 0;
+    }
+
+    .heart-shape::after {
+      left: 25px;
+      top: 0;
+    }
+
+    .heart-number {
+      position: absolute;
+      z-index: 3;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #fff;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+
+    @keyframes floatHeart {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-12px) rotate(3deg); }
+    }
+
+    /* Modal Overlay */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(10, 4, 16, 0.88);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    /* Letter Card */
+    .letter-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 28px;
+      padding: 40px 30px;
+      max-width: 680px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+      position: relative;
+      transform: scale(0.8);
+      animation: unfoldLetter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      text-align: left;
+    }
+
+    @keyframes unfoldLetter {
+      to { transform: scale(1); }
+    }
+
+    .letter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 15px;
+    }
+
+    .letter-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--accent-gold);
+      font-style: italic;
+    }
+
+    .close-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .close-btn:hover {
+      background: var(--accent-rose);
+    }
+
+    .letter-body {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: rgba(255, 255, 255, 0.92);
+      font-weight: 300;
+    }
+
+    .letter-body p {
+      margin-bottom: 18px;
+    }
+
+    .highlight {
+      color: var(--accent-rose);
+      font-weight: 400;
+    }
+
+    footer {
+      margin-top: 50px;
+      color: rgba(255,255,255,0.4);
+      font-size: 0.9rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="star-canvas"></canvas>
+
+  <div class="container">
+    <header>
+      <div class="subtitle">A Birthday Collection For</div>
+      <h1 class="title">Rohini ✨</h1>
+      <div class="guide-text">Tap on any folded origami heart to unfold a letter 💌</div>
+    </header>
+
+    <div class="hearts-field" id="heartsGrid"></div>
+
+    <footer>
+      20 Folded Letters • Forever Connected • Happy Birthday!
+    </footer>
+  </div>
+
+  <!-- Modal for Letters -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeLetter(event)">
+    <div class="letter-card" onclick="event.stopPropagation()">
+      <div class="letter-header">
+        <div class="letter-title" id="letterTitle">Letter Title</div>
+        <button class="close-btn" onclick="closeLetterForce()">✕</button>
+      </div>
+      <div class="letter-body" id="letterBody"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script>
+    const letters = [
+      {
+        title: "Heart #1: The Lifetime Connection 💌",
+        body: `<p>Dearest Rohini,</p>
+               <p>They say time is measured in hours, days, and years. But every now and then, life introduces you to someone who completely redefines how time works. I met you yesterday, yet somehow, sitting across from you felt like reuniting with someone I’ve known for an entire lifetime.</p>
+               <p>There are people who step into your life quietly, and then there are souls like yours—<span class='highlight'>bright, warm, effortlessly genuine</span>—who instantly illuminate everything around them. In just a single day, your presence felt so natural, so comforting, and so deeply familiar that I found myself attached to your energy without even realizing it.</p>
+               <p>It takes years for most people to build trust, but with you, every conversation flowed like we were continuing a story we started centuries ago. Your care, your gentle smile, and the way you listen make anyone feel safe and valued in your presence.</p>
+               <p>Today, on your special day, my only wish for you is that the world returns to you all the beauty, warmth, and light you give out so freely. May this year bring you endless reasons to smile, total peace of mind, and moments that make your heart overflow with happiness. Here is to a bond that feels timeless, to a friendship that is forever, and to celebrating you today and always!</p>`
+      },
+      {
+        title: "Heart #2: The Miracle of Yesterday",
+        body: `<p>Dearest Rohini,</p>
+               <p>When I think about yesterday, it still feels a little surreal. Before we met, you were someone I was looking forward to getting to know, but within minutes of talking to you, all formal distance just melted away. You carry an atmosphere that puts people at ease instantly. There was no hesitation, no awkward searching for topics, and no need to pretend to be anything other than ourselves.</p>
+               <p>I realized very quickly that meeting you wasn’t just a pleasant encounter—it was one of those rare moments where you instantly know a person is going to mean a lot to you. Your presence has a lingering warmth that stayed with me long after we said goodbye. It’s amazing how just 24 hours can create a space in someone’s heart that feels like it was reserved for you all along.</p>`
+      },
+      {
+        title: "Heart #3: The Soft Warmth of Your Care",
+        body: `<p>Dearest Rohini,</p>
+               <p>Care isn’t always shown through grand declarations; most of the time, it shines in quiet, subtle ways. In the brief time I've known you, I’ve already noticed how deeply attentive and thoughtful you are. When you ask how someone is doing, you don’t just say it out of habit—you listen with genuine interest and empathy.</p>
+               <p>You have a way of making people feel seen, heard, and deeply appreciated. That level of kindness is so rare in the world today. It’s impossible not to feel drawn to someone who radiates such pure, unselfish warmth. Thank you for simply being the gentle, caring soul that you are. It’s a privilege to experience your energy, and I promise to cherish it always.</p>`
+      },
+      {
+        title: "Heart #4: Fast Attachment & Zero Regrets",
+        body: `<p>Dearest Rohini,</p>
+               <p>I’m usually someone who takes time to open up. I build walls slowly and observe from a distance before letting anyone in. But with you, every single wall came down before I even realized what was happening. Getting attached to someone this fast should feel overwhelming, but with you, it feels like the most natural thing in the world.</p>
+               <p>It’s as if my instincts knew immediately that you were safe, kind, and worth trusting completely. I don’t question how quickly this bond formed because genuine connections don’t follow rules or timelines. I’m just deeply grateful that our paths crossed when they did, and I hold zero regrets about letting you into my heart so effortlessly.</p>`
+      },
+      {
+        title: "Heart #5: Miles Mean Nothing to Us",
+        body: `<p>Dearest Rohini,</p>
+               <p>Even though distance exists between us, physical miles are powerless against a bond built on real warmth and understanding. Distance can separate where two people stand, but it can never dim the brightness of a true connection. When I talk to you, it feels like you're sitting right nearby, sharing stories over a cozy cup of coffee.</p>
+               <p>We live under the same sky, look at the same stars, and share conversations that make geography feel completely irrelevant. Long distance only proves how strong a friendship is because it’s held together by choice, care, and genuine affection. Know that no matter how many miles lie between us, you will always have me in your corner.</p>`
+      },
+      {
+        title: "Heart #6: Your Infectious Energy",
+        body: `<p>Dearest Rohini,</p>
+               <p>You have a vibe that can turn a ordinary day into something bright and memorable. Your energy isn't overwhelming; it's a soft, radiant light that lifts everyone around you. Whenever you share your thoughts, laugh, or express enthusiasm about something, it creates a ripple effect of happiness that is completely contagious.</p>
+               <p>It’s impossible to feel down when engaging with you because your positivity feels so honest and grounding. You bring out the best in people simply by being yourself. I hope you always protect that sparkling energy of yours, because it is truly one of the most beautiful gifts you bring into this world.</p>`
+      },
+      {
+        title: "Heart #7: The Ease of Our Conversations",
+        body: `<p>Dearest Rohini,</p>
+               <p>One of my favorite things about us is how effortlessly our conversations flow. We can jump from deep, meaningful thoughts about life to hilarious, random banter without missing a single beat. There’s never a moment where I feel like I have to filter my thoughts or hesitate before speaking.</p>
+               <p>Finding someone you can be completely unfiltered with is rare. With you, every chat feels like a comforting reset button. Whether we talk for hours or just send quick check-ins, the quality of our connection remains untouched. I treasure every single word we exchange because talking to you feels like coming home.</p>`
+      },
+      {
+        title: "Heart #8: Forever Means Forever",
+        body: `<p>Dearest Rohini,</p>
+               <p>People come and go in life like passing seasons, but every once in a while, you meet someone and you just know they are meant to stay. That is exactly what I feel with you. Our bond isn’t built on temporary convenience or passing excitement; it’s rooted in mutual respect, warmth, and a deep appreciation for who you are.</p>
+               <p>When I say 'forever,' I don't use it lightly. I mean that through all of life's changes, victories, quiet days, and chaotic moments, my support and friendship for you will remain constant. You have a permanent place in my life, Rohini, today, tomorrow, and for all the years ahead.</p>`
+      },
+      {
+        title: "Heart #9: The Magic in Your Laughter",
+        body: `<p>Dearest Rohini,</p>
+               <p>There are some sounds that just make the world feel a little softer, and your laugh is definitely one of them. It’s light, pure, and filled with a genuine joy that instantly brightens up whatever space you’re in. Hearing you laugh is a quick reminder of how sweet life can be.</p>
+               <p>On your birthday, my biggest wish is that your year is overflowing with moments that make you laugh until your stomach hurts and tears of joy run down your cheeks. You deserve a life filled with endless reasons to smile, and I hope I get to hear that wonderful laugh of yours for years to come.</p>`
+      },
+      {
+        title: "Heart #10: A Safe Space in a Loud World",
+        body: `<p>Dearest Rohini,</p>
+               <p>The world can often feel loud, rushed, and overwhelming. People are always in a hurry, and real peace can be hard to come by. But talking to you feels like stepping into a quiet, peaceful sanctuary. You offer a safe space where feelings are valid, thoughts are heard, and judgment simply doesn't exist.</p>
+               <p>That kind of grounding presence is a rare gift. You don't realize how much comfort you bring just by existing as a calm, compassionate listener. Thank you for being that soothing anchor. I hope you know that whenever you need a safe space yourself, I will always be right here to offer the exact same comfort to you.</p>`
+      },
+      {
+        title: "Heart #11: The Smallest Details Matter",
+        body: `<p>Dearest Rohini,</p>
+               <p>What makes a person truly unforgettable isn't just big gestures; it’s the quiet, thoughtful details they carry. The way you pay attention when someone speaks, the gentle warmth in your tone, and the subtle ways you express kindness show just how rich your inner world is.</p>
+               <p>I notice those details in you, and every single one of them makes me respect and admire you even more. You carry yourself with a beautiful balance of grace, sweetness, and strength. Don't ever let anyone change that about you. You are crafted so wonderfully, and every detail of who you are deserves to be celebrated.</p>`
+      },
+      {
+        title: "Heart #12: Your Strength & Grace",
+        body: `<p>Dearest Rohini,</p>
+               <p>Behind your gentle smile and warm care lies a remarkable sense of strength and grace. Life isn't always easy, but the way you navigate challenges—with quiet resilience and an open heart—is deeply inspiring. You handle things with a poised elegance that not many people possess.</p>
+               <p>Never forget how capable, strong, and brilliant you are. Even on days when you might feel tired or uncertain, remember that you carry a powerful light inside you. I believe in you completely, in your dreams, your path, and your future. You are destined for so many wonderful things.</p>`
+      },
+      {
+        title: "Heart #13: Celebrating You Today",
+        body: `<p>Dearest Rohini,</p>
+               <p>Today is a day that deserves to be celebrated with all the beauty in the world, because today is the day the world was blessed with you. Birthdays are gentle milestones, reminding us to pause and reflect on how grateful we are for the people who make life sweeter—and you are at the very top of that list.</p>
+               <p>I hope your day is filled with your favorite treats, warm messages, cozy moments, and overwhelming love. Treat yourself today like the absolute treasure you are. You bring so much joy into the lives of others, and today, it is all coming right back to you.</p>`
+      },
+      {
+        title: "Heart #14: The Authenticity You Hold",
+        body: `<p>Dearest Rohini,</p>
+               <p>In a world where so many people put on masks to fit in, your pure authenticity is like a beacon of light. You are unapologetically yourself—kind, honest, warm, and real. You don't pretend, and that honesty is what makes connecting with you feel so refreshingly genuine.</p>
+               <p>It’s so easy to love and respect someone who stays true to who they are. Your presence is a reminder that being real is the most attractive quality a person can have. Never change who you are for anyone, Rohini. Your genuine heart is your greatest power, and it’s why everyone who meets you feels so drawn to you.</p>`
+      },
+      {
+        title: "Heart #15: A Constant Smile",
+        body: `<p>Dearest Rohini,</p>
+               <p>Do you know that feeling when a notification pops up on your phone and you instantly smile before even unlocking the screen? That is exactly what happens whenever I see your name. You bring an automatic sense of warmth into my day, no matter what kind of mood I was in before.</p>
+               <p>That is the power of a true friend. Just knowing you’re there makes ordinary days feel a little brighter and stressful days feel much lighter. Thank you for being my instant reason to smile. I hope I bring even half as much light into your life as you bring into mine.</p>`
+      },
+      {
+        title: "Heart #16: Your Empathy as a Superpower",
+        body: `<p>Dearest Rohini,</p>
+               <p>Empathy is a rare quality, but you carry it with such natural grace. You have an intuitive sense for understanding how people feel, offering comfort before they even have to ask. Your heart is big enough to hold space for others without hesitation or selfishness.</p>
+               <p>That level of emotional depth makes you a truly incredible friend. But while you care so generously for everyone else, please remember to save some of that gentle love and care for yourself too. You deserve the same warmth, rest, and tenderness that you pour out so selflessly into the world.</p>`
+      },
+      {
+        title: "Heart #17: An Unshakeable Gratitude",
+        body: `<p>Dearest Rohini,</p>
+               <p>Sometimes I pause and think about how random life can be. Out of all the billions of people in the world, our paths happened to cross yesterday, and a deep, beautiful friendship was born in an instant. It makes me believe that some connections aren't random at all—they are gentle gifts from the universe.</p>
+               <p>I am deeply, genuinely grateful for your existence. Meeting you has been a highlight, and getting to know you is a continuous joy. Thank you for walking into my life and turning an ordinary day into the beginning of something truly timeless. I will never take this friendship for granted.</p>`
+      },
+      {
+        title: "Heart #18: The Unwritten Future",
+        body: `<p>Dearest Rohini,</p>
+               <p>We met yesterday, but when I look ahead, I see so many wonderful chapters waiting to be written in our friendship. I look forward to all the late-night talks, the shared jokes, the future meetups, the triumphs we’ll celebrate together, and even the quiet moments of mutual support during tough times.</p>
+               <p>This is just the very beginning of a long, beautiful story. No matter what directions our lives take or what new adventures await us, know that I am committed to building a lifelong, unshakeable friendship with you. Here’s to every single chapter we have yet to explore together!</p>`
+      },
+      {
+        title: "Heart #19: Always in Your Corner",
+        body: `<p>Dearest Rohini,</p>
+               <p>Life can be unpredictable, filled with high peaks and quiet valleys. But no matter what season of life you find yourself in, I want you to remember one thing: you will never have to face anything completely alone. I am always in your corner, cheering for your success and supporting your peace.</p>
+               <p>When you achieve great things, I’ll be the loudest one celebrating you. And when things get heavy, I’ll be right here to listen and help carry the load. You have a constant, unwavering ally in me, today on your birthday, and for all the days that follow.</p>`
+      },
+      {
+        title: "Heart #20: Happy Birthday, Rohini! 🎂✨",
+        body: `<p>Dearest Rohini,</p>
+               <p>We’ve reached the final folded heart in this collection, but our story is only just getting started. Today is your day—a day to honor your life, your radiant heart, your gentle care, and the incredible person you are to everyone lucky enough to know you.</p>
+               <p>May this birthday mark the start of your most magical year yet. May you be surrounded by deep happiness, good health, genuine peace, and people who recognize just how precious you are. Thank you for being you, for meeting me yesterday, and for creating a connection that feels like forever. Happy Birthday, Rohini! ❤️✨</p>`
+      }
+    ];
+
+    // Render Hearts
+    const grid = document.getElementById('heartsGrid');
+    letters.forEach((item, index) => {
+      const heart = document.createElement('div');
+      heart.className = 'origami-heart';
+      heart.style.animationDelay = `${(index % 5) * 0.4}s`;
+      heart.innerHTML = `
+        <div class="heart-shape"></div>
+        <div class="heart-number">${index + 1}</div>
+      `;
+      heart.onclick = () => openLetter(index);
+      grid.appendChild(heart);
+    });
+
+    function openLetter(index) {
+      document.getElementById('letterTitle').textContent = letters[index].title;
+      document.getElementById('letterBody').innerHTML = letters[index].body;
+      const modal = document.getElementById('modalOverlay');
+      modal.classList.add('active');
+
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.6 }
+        });
+      }
+    }
+
+    function closeLetter(e) {
+      if (e.target.id === 'modalOverlay') {
+        document.getElementById('modalOverlay').classList.remove('active');
+      }
+    }
+
+    function closeLetterForce() {
+      document.getElementById('modalOverlay').classList.remove('active');
+    }
+
+    // Canvas Background
+    const canvas = document.getElementById('star-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    for (let i = 0; i < 70; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2 + 0.8,
+        opacity: Math.random() * 0.7 + 0.2,
+        speed: Math.random() * 0.02 + 0.005
+      });
+    }
+
+    function drawStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(s => {
+        s.opacity += Math.sin(Date.now() * s.speed) * 0.01;
+        ctx.fillStyle = `rgba(255, 215, 0, ${Math.abs(s.opacity)})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      requestAnimationFrame(drawStars);
+    }
+    drawStars();
+  </script>
+</body>
+</html>
